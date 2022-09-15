@@ -38,7 +38,7 @@ async function isRegistered(req, res, next) {
          if(user) {
              res.status(409).send('Este e-mail já está cadastrado!');
              return;
-         }
+        }
 
     next();
 }
@@ -53,10 +53,12 @@ async function allowLogin(req, res, next) {
 
         if(!user) {
             res.status(401).send('E-mail ou senha inválidos!');
+            return;
         }
     
         if(!bcrypt.compareSync(password, user.encrypted_password)) {
-        res.status(401).send('E-mail ou senha inválidos!');
+            res.status(401).send('E-mail ou senha inválidos!');
+            return;
         }
         
         res.locals.user = user; 

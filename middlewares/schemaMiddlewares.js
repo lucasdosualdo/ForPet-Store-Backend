@@ -13,6 +13,7 @@ function signUpSchema(req, res, next) {
     if(validation.error) {
         const errors = validation.error.details.map(detail => detail.message);
         res.status(422).send(errors);
+        return;
     }
 
     next();
