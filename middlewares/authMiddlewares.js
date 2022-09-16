@@ -17,6 +17,7 @@ async function isLogged(req, res, next) {
 
         if(!session) {
             res.status(401).send('Sessão expirada! Faça o login para continuar.');
+            console.log(token)
             return;
         }
 

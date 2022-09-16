@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRouter from "./routers/authRouter.js";
 import itemsRouter from "./routers/itemsRouter.js";
+import sessionRouter from "./routers/sessionRouter.js";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(cors());
 app.use(authRouter);
 app.use(itemsRouter);
+app.use(sessionRouter);
 
 app.listen(process.env.PORT_API, () => {
   console.log("listening on port 5000");
