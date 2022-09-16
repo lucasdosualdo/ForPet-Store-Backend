@@ -1,19 +1,25 @@
-import db from '../db/db.js';
+import db from "../db/db.js";
 
 async function getItems(req, res) {
-    try {
-        const items = await db
-            .collection('items')
-            .find()
-            .toArray();
-        
-        res.send(items);
+  try {
+    const items = await db.collection("items").find().toArray();
 
-    } catch(error) {
-        res.status(500).send(error.message);
-    }
+    res.send(items);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
 
-export {
-    getItems
+async function getItem(req, res) {
+  const {itemId} = req.params;
+  console.log(itemId);
+
+  try {
+    const item = await db.collection('items').findOne({ _id: itemId });
+    res.send(item);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
+
+export { getItems, getItem };
