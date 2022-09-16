@@ -10,16 +10,4 @@ async function getItems(req, res) {
   }
 }
 
-async function getItem(req, res) {
-  const {itemId} = req.params;
-  console.log(itemId);
-
-  try {
-    const item = await db.collection('items').findOne({ _id: itemId });
-    res.send(item);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-}
-
-export { getItems, getItem };
+export { getItems };
