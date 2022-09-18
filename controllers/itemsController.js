@@ -2,20 +2,14 @@ import { ObjectId } from 'mongodb';
 import db from '../db/db.js';
 
 async function getItems(req, res) {
-    const animal = req.query.for;
-    const type = req.query.type;
-    let page;
     let items;
+    const params = res.locals.params;
 
-    if(type && animal) {
-        page= `for: ${animal}, type=${type}`;
-    }
-    
     try {
-        if(page) {
+        if(params) {
             items = await db
                 .collection('items')
-                .find({page})
+                .find({for: params.pet, type: params.type})
                 .toArray();
         } else {
             items = await db
@@ -23,7 +17,7 @@ async function getItems(req, res) {
                 .find()
                 .toArray();
         }
-        
+
         res.send(items);
 
     } catch(error) {
@@ -78,8 +72,58 @@ async function getFavorites(req, res) {
     }
 }
 
+async function getCathegories(req, res) {
+    const pet = req.params.for;
+
+    try {
+        const cathegories = await db
+            .collection('cathegories')
+            .findOne({pet: pet});
+        
+        res.send(cathegories.types);
+    } catch(error) {
+        res.status(500).send(error.message);
+    }
+
+}
+
+async function getHistory(req, res) {
+    const session = res.locals.session;
+
+    try {
+        const history = await db
+            .collection('history')
+            .find({userId: session.userId})
+            .toArray();
+
+        res.send(history);
+    } catch(error) {
+        res.status(500).send(error.message);
+    }
+}
+
+async function getOrder(req, res) {
+    const { orderId } = req.params;
+    const session = res.locals.session;
+
+    try {
+        const order = await db
+            .collection('purchasedItems')
+            .find({_id: ObjectId(order.orderId), userId: session.userId});
+
+        res.send(order);
+    } catch(error) {
+        res.status(500).send(error.message);
+    }
+}
+
+
+
 export {
     getItems,
     postFavorite,
-    getFavorites
+    getFavorites,
+    getCathegories,
+    getHistory,
+    getOrder
 }
