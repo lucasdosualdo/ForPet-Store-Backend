@@ -2,18 +2,15 @@ import { ObjectId } from "mongodb";
 import db from "../db/db.js";
 
 async function getItems(req, res) {
-  const animal = req.query.for;
-  const type = req.query.type;
-  let page;
   let items;
-
-  if (type && animal) {
-    page = `for: ${animal}, type=${type}`;
-  }
+  const params = res.locals.params;
 
   try {
-    if (page) {
-      items = await db.collection("items").find({ page }).toArray();
+    if (params) {
+      items = await db
+        .collection("items")
+        .find({ for: params.pet, type: params.type })
+        .toArray();
     } else {
       items = await db.collection("items").find().toArray();
     }
@@ -69,6 +66,50 @@ async function getFavorites(req, res) {
   }
 }
 
+async function getCathegories(req, res) {
+  const pet = req.params.for;
+
+  try {
+    const cathegories = await db
+      .collection("cathegories")
+      .findOne({ pet: pet });
+
+    res.send(cathegories.types);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+async function getHistory(req, res) {
+  const session = res.locals.session;
+
+  try {
+    const history = await db
+      .collection("history")
+      .find({ userId: session.userId })
+      .toArray();
+
+    res.send(history);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+async function getOrder(req, res) {
+  const { orderId } = req.params;
+  const session = res.locals.session;
+
+  try {
+    const order = await db
+      .collection("purchasedItems")
+      // .find({ _id: ObjectId(order.orderId), userId: session.userId });
+      .find({ _id: ObjectId(orderId)});
+    res.send(order);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
 async function postPurchase(req, res) {
   try {
     const purchase = await db.collection("purchasedItems").insertOne(req.body);
@@ -78,4 +119,12 @@ async function postPurchase(req, res) {
   }
 }
 
-export { getItems, postFavorite, getFavorites, postPurchase };
+export {
+  getItems,
+  postFavorite,
+  getFavorites,
+  getCathegories,
+  getHistory,
+  getOrder,
+  postPurchase,
+};

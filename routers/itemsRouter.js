@@ -1,19 +1,29 @@
 import express from "express";
 import { isLogged } from "../middlewares/authMiddlewares.js";
-import { hasItem, isFavorite } from "../middlewares/itemsMiddlewares.js";
+import {
+  hasItem,
+  isFavorite,
+  filter,
+} from "../middlewares/itemsMiddlewares.js";
 import {
   getItems,
   postFavorite,
   getFavorites,
+  getCathegories,
+  getHistory,
+  getOrder,
   postPurchase,
 } from "../controllers/itemsController.js";
 
 const router = express.Router();
 router.use(isLogged);
 
-router.get("/items", getItems);
+router.get("/items", filter, getItems);
 router.post("/favorites", hasItem, isFavorite, postFavorite);
 router.get("/favorites", getFavorites);
+router.get("/cathegories/:for", getCathegories);
+router.get("/history", getHistory);
+router.get("/order/:orderId", getOrder);
 router.post("/purchase", postPurchase);
 
 export default router;
