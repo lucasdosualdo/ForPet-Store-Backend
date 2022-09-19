@@ -1,129 +1,196 @@
-import { ObjectId } from 'mongodb';
-import db from '../db/db.js';
+import { ObjectId } from "mongodb";
+import db from "../db/db.js";
 
 async function getItems(req, res) {
-    let items;
-    const params = res.locals.params;
+  let items;
+  const params = res.locals.params;
 
-    try {
-        if(params) {
-            items = await db
-                .collection('items')
-                .find({for: params.pet, type: params.type})
-                .toArray();
-        } else {
-            items = await db
-                .collection('items')
-                .find()
-                .toArray();
-        }
-
-        res.send(items);
-
-    } catch(error) {
-        res.status(500).send(error.message);
+  try {
+    if (params) {
+      items = await db
+        .collection("items")
+        .find({ for: params.pet, type: params.type })
+        .toArray();
+    } else {
+      items = await db.collection("items").find().toArray();
     }
+
+    res.send(items);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
 
 async function postFavorite(req, res) {
-    const item = res.locals.item;
-    const session = res.locals.session;
-    const favorite = res.locals.favorite;
+  const item = res.locals.item;
+  const session = res.locals.session;
+  const favorite = res.locals.favorite;
 
-    try {
-        if(favorite === false) {
-            await db 
-                .collection('favorites')
-                .insertOne({
-                    itemId: item._id,
-                    userId: session.userId,
-                    name: item.name,
-                    for: item.for,
-                    type: item.type,
-                    about: item.about,
-                    price: item.price,
-                    brand: item.brand,
-                    image: item.image
-                });
-        } else {
-            await db 
-                .collection('favorites')
-                .deleteOne({itemId: ObjectId(item._id)});
-        }
-        
-        res.sendStatus(200);
-    } catch(error) {
-        res.status(500).send(error.message);
+  try {
+    if (favorite === false) {
+      await db.collection("favorites").insertOne({
+        itemId: item._id,
+        userId: session.userId,
+        name: item.name,
+        for: item.for,
+        type: item.type,
+        about: item.about,
+        price: item.price,
+        brand: item.brand,
+        image: item.image,
+      });
+    } else {
+      await db
+        .collection("favorites")
+        .deleteOne({ itemId: ObjectId(item._id) });
     }
+
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
 
 async function getFavorites(req, res) {
-    const session = res.locals.session;
+  const session = res.locals.session;
 
-    try {
-        const favorites = await db
-            .collection('favorites')
-            .find({userId: session.userId})
-            .toArray();
+  try {
+    const favorites = await db
+      .collection("favorites")
+      .find({ userId: session.userId })
+      .toArray();
 
-        res.send(favorites);
-    } catch(error) {
-        res.status(500).send(error.message);
-    }
+    res.send(favorites);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
 
 async function getCathegories(req, res) {
-    const pet = req.params.for;
+  const pet = req.params.for;
 
-    try {
-        const cathegories = await db
-            .collection('cathegories')
-            .findOne({pet: pet});
-        
-        res.send(cathegories.types);
-    } catch(error) {
-        res.status(500).send(error.message);
-    }
+  try {
+    const cathegories = await db
+      .collection("cathegories")
+      .findOne({ pet: pet });
 
+    res.send(cathegories.types);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
 
 async function getHistory(req, res) {
-    const session = res.locals.session;
+  const session = res.locals.session;
 
-    try {
-        const history = await db
-            .collection('history')
-            .find({userId: session.userId})
-            .toArray();
+  try {
+    const history = await db
+      .collection("history")
+      .find({ userId: session.userId })
+      .toArray();
 
-        res.send(history);
-    } catch(error) {
-        res.status(500).send(error.message);
-    }
+    res.send(history);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
 
 async function getOrder(req, res) {
-    const { orderId } = req.params;
-    const session = res.locals.session;
+  const { orderId } = req.params;
+  const session = res.locals.session;
 
-    try {
-        const order = await db
-            .collection('purchasedItems')
-            .find({_id: ObjectId(order.orderId), userId: session.userId});
-
-        res.send(order);
-    } catch(error) {
-        res.status(500).send(error.message);
-    }
+  try {
+    const order = await db
+      .collection("purchasedItems")
+      // .find({ _id: ObjectId(order.orderId), userId: session.userId });
+      .find({ _id: ObjectId(orderId) });
+    res.send(order);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
 
+async function postPurchase(req, res) {
+  try {
+    const purchase = await db.collection("purchasedItems").insertOne(req.body);
+    res.status(201).send(purchase);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
 
+async function postCart(req, res) {
+  const { itemId, quantify } = req.body;
+  const updateQuantify = Number(quantify) + 1;
+  try {
+    const searchItem = await db.collection("cart").findOne({ itemId });
+    if (!searchItem) {
+      const addCart = await db.collection("cart").insertOne(req.body);
+      res.status(201).send(addCart);
+      return;
+    }
+    const updateQuantify = Number(searchItem.quantify) + quantify;
+    const updateItem = await db
+      .collection("cart")
+      .updateOne({ itemId }, { $set: { quantify: updateQuantify } });
+    res.status(201).send(updateItem);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+async function getCart(req, res) {
+  const session = res.locals.session;
+  try {
+    const getCartItems = await db
+      .collection("cart")
+      .find({ email: session.email })
+      .toArray();
+    console.log(getCartItems);
+    res.status(201).send(getCartItems);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+async function deleteItem(req, res) {
+  const itemId = req.params.itemId;
+  console.log(itemId);
+  try {
+    await db.collection("cart").deleteOne({ itemId });
+    res.status(201).send("item excluído");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+}
+
+//precisa ser atualizada
+async function decrementItem(req, res) {
+  const {itemId} = req.body
+  try {
+    const item = await db.collection("cart").findOne({ itemId });
+    const updateQuantify = Number(item.quantify) - 1;
+    const minor = await db
+      .collection("cart")
+      .updateOne({ itemId }, { $set: { quantify: updateQuantify } });
+    res.status(201).send(minor);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+}
 
 export {
-    getItems,
-    postFavorite,
-    getFavorites,
-    getCathegories,
-    getHistory,
-    getOrder
-}
+  getItems,
+  postFavorite,
+  getFavorites,
+  getCathegories,
+  getHistory,
+  getOrder,
+  postPurchase,
+  postCart,
+  getCart,
+  decrementItem,
+  deleteItem,
+};

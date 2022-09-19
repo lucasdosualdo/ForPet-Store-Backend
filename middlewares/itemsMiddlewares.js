@@ -22,6 +22,7 @@ async function hasItem(req, res, next) {
     next();
 }
 
+
 async function isFavorite(req, res, next) {
     const { id } = req.body;
     const session = res.locals.session;

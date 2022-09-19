@@ -34,7 +34,9 @@ async function signUpUser(req, res) {
             });
 
         res.status(200).send({
+            userId: user._id,
             name: user.name,
+            email: user.email,
             token
         });        
 

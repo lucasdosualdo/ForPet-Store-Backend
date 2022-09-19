@@ -1,7 +1,7 @@
 import db from '../db/db.js';
 
 async function getSession(req, res) {
-    const session = res.loals.session;
+    const session = res.locals.session;
 
     try {
         res.send(session);
