@@ -120,9 +120,20 @@ async function postPurchase(req, res) {
 }
 
 async function postCart(req, res) {
+  const { itemId, quantify } = req.body;
+  const updateQuantify = Number(quantify) + 1;
   try {
-    const addCart = await db.collection("cart").insertOne(req.body);
-    res.status(201).send(addCart);
+    const searchItem = await db.collection("cart").findOne({ itemId });
+    if (!searchItem) {
+      const addCart = await db.collection("cart").insertOne(req.body);
+      res.status(201).send(addCart);
+      return;
+    }
+    const updateQuantify = Number(searchItem.quantify) + quantify;
+    const updateItem = await db
+      .collection("cart")
+      .updateOne({ itemId }, { $set: { quantify: updateQuantify } });
+    res.status(201).send(updateItem);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -130,7 +141,6 @@ async function postCart(req, res) {
 
 async function getCart(req, res) {
   const session = res.locals.session;
-
   try {
     const getCartItems = await db
       .collection("cart")
