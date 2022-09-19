@@ -15,7 +15,6 @@ import {
   postPurchase,
   postCart,
   getCart,
-  decrementItem,
   deleteItem,
 } from "../controllers/itemsController.js";
 
@@ -32,6 +31,5 @@ router.post("/purchase", postPurchase);
 router.post("/cart", postCart);
 router.get("/cart", getCart);
 router.delete("/cart/:itemId", deleteItem);
-router.post("/cartitem", decrementItem);
 
 export default router;

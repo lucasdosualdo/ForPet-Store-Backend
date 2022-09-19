@@ -85,7 +85,7 @@ async function getHistory(req, res) {
 
   try {
     const history = await db
-      .collection("history")
+      .collection("purchasedItems")
       .find({ userId: session.userId })
       .toArray();
 
@@ -120,8 +120,7 @@ async function postPurchase(req, res) {
 }
 
 async function postCart(req, res) {
-  const { itemId, quantify } = req.body;
-  const updateQuantify = Number(quantify) + 1;
+  const { itemId, quantify, totalValue } = req.body;
   try {
     const searchItem = await db.collection("cart").findOne({ itemId });
     if (!searchItem) {
@@ -130,9 +129,14 @@ async function postCart(req, res) {
       return;
     }
     const updateQuantify = Number(searchItem.quantify) + quantify;
+    const updateTotalValue = Number(searchItem.totalValue) + Number(totalValue);
+    console.log(updateQuantify, updateTotalValue);
     const updateItem = await db
       .collection("cart")
-      .updateOne({ itemId }, { $set: { quantify: updateQuantify } });
+      .updateOne(
+        { itemId },
+        { $set: { quantify: updateQuantify, totalValue: updateTotalValue } }
+      );
     res.status(201).send(updateItem);
   } catch (error) {
     res.status(500).send(error.message);
@@ -146,7 +150,6 @@ async function getCart(req, res) {
       .collection("cart")
       .find({ email: session.email })
       .toArray();
-    console.log(getCartItems);
     res.status(201).send(getCartItems);
   } catch (error) {
     res.status(500).send(error.message);
@@ -165,22 +168,6 @@ async function deleteItem(req, res) {
   }
 }
 
-//precisa ser atualizada
-async function decrementItem(req, res) {
-  const {itemId} = req.body
-  try {
-    const item = await db.collection("cart").findOne({ itemId });
-    const updateQuantify = Number(item.quantify) - 1;
-    const minor = await db
-      .collection("cart")
-      .updateOne({ itemId }, { $set: { quantify: updateQuantify } });
-    res.status(201).send(minor);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error.message);
-  }
-}
-
 export {
   getItems,
   postFavorite,
@@ -191,6 +178,5 @@ export {
   postPurchase,
   postCart,
   getCart,
-  decrementItem,
   deleteItem,
 };
