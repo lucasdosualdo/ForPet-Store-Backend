@@ -13,6 +13,8 @@ import {
   getHistory,
   getOrder,
   postPurchase,
+  postCart,
+  getCart
 } from "../controllers/itemsController.js";
 
 const router = express.Router();
@@ -25,6 +27,8 @@ router.get("/cathegories/:for", getCathegories);
 router.get("/history", getHistory);
 router.get("/order/:orderId", getOrder);
 router.post("/purchase", postPurchase);
-// router.post("/cart", postCart);
+router.post("/cart", postCart);
+router.get("/cart", getCart);
+
 
 export default router;

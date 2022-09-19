@@ -103,7 +103,7 @@ async function getOrder(req, res) {
     const order = await db
       .collection("purchasedItems")
       // .find({ _id: ObjectId(order.orderId), userId: session.userId });
-      .find({ _id: ObjectId(orderId)});
+      .find({ _id: ObjectId(orderId) });
     res.send(order);
   } catch (error) {
     res.status(500).send(error.message);
@@ -119,6 +119,30 @@ async function postPurchase(req, res) {
   }
 }
 
+async function postCart(req, res) {
+  try {
+    const addCart = await db.collection("cart").insertOne(req.body);
+    res.status(201).send(addCart);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+async function getCart(req, res) {
+  const session = res.locals.session;
+
+  try {
+    const getCartItems = await db
+      .collection("cart")
+      .find({ email: session.email })
+      .toArray();
+    console.log(getCartItems);
+    res.status(201).send(getCartItems);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
 export {
   getItems,
   postFavorite,
@@ -127,4 +151,6 @@ export {
   getHistory,
   getOrder,
   postPurchase,
+  postCart,
+  getCart,
 };
