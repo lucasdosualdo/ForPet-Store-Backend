@@ -102,8 +102,7 @@ async function getOrder(req, res) {
   try {
     const order = await db
       .collection("purchasedItems")
-      // .find({ _id: ObjectId(order.orderId), userId: session.userId });
-      .find({ _id: ObjectId(orderId) });
+      .findOne({ _id: ObjectId(orderId) });
     res.send(order);
   } catch (error) {
     res.status(500).send(error.message);
@@ -162,6 +161,11 @@ async function deleteItem(req, res) {
   const itemId = req.params.itemId;
   console.log(itemId);
   try {
+    if (itemId === "checkout") {
+      await db.collection("cart").deleteMany({});
+      res.status(201).send("carrinho vazio.");
+      return;
+    }
     await db.collection("cart").deleteOne({ itemId });
     res.status(201).send("item excluído");
   } catch (error) {
