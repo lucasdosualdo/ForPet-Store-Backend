@@ -25,5 +25,6 @@ router.get("/cathegories/:for", getCathegories);
 router.get("/history", getHistory);
 router.get("/order/:orderId", getOrder);
 router.post("/purchase", postPurchase);
+// router.post("/cart", postCart);
 
 export default router;
