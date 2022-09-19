@@ -129,7 +129,9 @@ async function postCart(req, res) {
       return;
     }
     const updateQuantify = Number(searchItem.quantify) + quantify;
-    const updateTotalValue = Number(searchItem.totalValue) + Number(totalValue);
+    const updateTotalValue = (
+      Number(searchItem.totalValue) + Number(totalValue)
+    ).toFixed(2);
     console.log(updateQuantify, updateTotalValue);
     const updateItem = await db
       .collection("cart")
