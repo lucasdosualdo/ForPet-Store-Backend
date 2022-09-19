@@ -102,8 +102,7 @@ async function getOrder(req, res) {
   try {
     const order = await db
       .collection("purchasedItems")
-      // .find({ _id: ObjectId(order.orderId), userId: session.userId });
-      .find({ _id: ObjectId(orderId) });
+      .findOne({ _id: ObjectId(orderId) });
     res.send(order);
   } catch (error) {
     res.status(500).send(error.message);
@@ -129,7 +128,9 @@ async function postCart(req, res) {
       return;
     }
     const updateQuantify = Number(searchItem.quantify) + quantify;
-    const updateTotalValue = Number(searchItem.totalValue) + Number(totalValue);
+    const updateTotalValue = (
+      Number(searchItem.totalValue) + Number(totalValue)
+    ).toFixed(2);
     console.log(updateQuantify, updateTotalValue);
     const updateItem = await db
       .collection("cart")
@@ -160,6 +161,11 @@ async function deleteItem(req, res) {
   const itemId = req.params.itemId;
   console.log(itemId);
   try {
+    if (itemId === "checkout") {
+      await db.collection("cart").deleteMany({});
+      res.status(201).send("carrinho vazio.");
+      return;
+    }
     await db.collection("cart").deleteOne({ itemId });
     res.status(201).send("item excluído");
   } catch (error) {
