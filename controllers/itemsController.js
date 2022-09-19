@@ -153,6 +153,34 @@ async function getCart(req, res) {
   }
 }
 
+async function deleteItem(req, res) {
+  const itemId = req.params.itemId;
+  console.log(itemId);
+  try {
+    await db.collection("cart").deleteOne({ itemId });
+    res.status(201).send("item excluído");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+}
+
+//precisa ser atualizada
+async function decrementItem(req, res) {
+  const {itemId} = req.body
+  try {
+    const item = await db.collection("cart").findOne({ itemId });
+    const updateQuantify = Number(item.quantify) - 1;
+    const minor = await db
+      .collection("cart")
+      .updateOne({ itemId }, { $set: { quantify: updateQuantify } });
+    res.status(201).send(minor);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+}
+
 export {
   getItems,
   postFavorite,
@@ -163,4 +191,6 @@ export {
   postPurchase,
   postCart,
   getCart,
+  decrementItem,
+  deleteItem,
 };

@@ -14,7 +14,9 @@ import {
   getOrder,
   postPurchase,
   postCart,
-  getCart
+  getCart,
+  decrementItem,
+  deleteItem,
 } from "../controllers/itemsController.js";
 
 const router = express.Router();
@@ -29,6 +31,7 @@ router.get("/order/:orderId", getOrder);
 router.post("/purchase", postPurchase);
 router.post("/cart", postCart);
 router.get("/cart", getCart);
-
+router.delete("/cart/:itemId", deleteItem);
+router.post("/cartitem", decrementItem);
 
 export default router;
