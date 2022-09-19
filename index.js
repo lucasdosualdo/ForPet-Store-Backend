@@ -15,8 +15,8 @@ app.use(authRouter);
 app.use(itemsRouter);
 app.use(sessionRouter);
 
-app.listen(process.env.PORT_API, () => {
-  console.log("listening on port 5000");
+app.listen(process.env.PORT, () => {
+  console.log("listening on port " + process.env.PORT);
 });
 
 // OBS: arquivo .env:
