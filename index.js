@@ -19,7 +19,3 @@ app.listen(process.env.PORT, () => {
   console.log("listening on port " + process.env.PORT);
 });
 
-// OBS: arquivo .env:
-// MONGO_URI=mongodb://localhost:27017
-// MONGO_DB=project14-forpetstore
-// PORT_API=5000
