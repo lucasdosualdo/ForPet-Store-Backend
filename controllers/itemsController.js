@@ -82,13 +82,12 @@ async function getCathegories(req, res) {
 
 async function getHistory(req, res) {
   const session = res.locals.session;
-
   try {
     const history = await db
       .collection("purchasedItems")
-      .find({ userId: session.userId })
+      .find({ userId: session.userId.toString() })
       .toArray();
-
+    console.log(history);
     res.send(history);
   } catch (error) {
     res.status(500).send(error.message);
