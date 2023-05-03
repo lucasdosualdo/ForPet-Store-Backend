@@ -2,7 +2,7 @@
 
 ForPet Store is a mobile ecommerce application for pet shops. In the app, users can experience an easy and enjoyable shopping experience for their pets.
 
-<img src="/src/assets/preview-pictures/picture-1.png" width="230" /> <img src="/src/assets/preview-pictures/picture-2.png" width="230" /> <img src="/src/assets/preview-pictures/picture-3.png" width="230" /> <img src="/src/assets/preview-pictures/picture-4.png" width="230" /> <img src="/src/assets/preview-pictures/picture-5.png" width="230" /> <img src="/src/assets/preview-pictures/picture-6.png" width="230" /> <img src="/src/assets/preview-pictures/picture-7.png" width="230" /> <img src="/src/assets/preview-pictures/picture-8.png" width="230" />
+<img src="/assets/preview-pictures/picture-1.png" width="230" /> <img src="/assets/preview-pictures/picture-2.png" width="230" /> <img src="/assets/preview-pictures/picture-3.png" width="230" /> <img src="/assets/preview-pictures/picture-4.png" width="230" /> <img src="/assets/preview-pictures/picture-5.png" width="230" /> <img src="/assets/preview-pictures/picture-6.png" width="230" /> <img src="/assets/preview-pictures/picture-7.png" width="230" /> <img src="/assets/preview-pictures/picture-8.png" width="230" />
 
 ## Features
 
